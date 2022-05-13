@@ -8,3 +8,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "TenzDemo"
 include ':app'
+include ':screenshot'
+include ':watermark'
