@@ -6,7 +6,9 @@ import android.graphics.Matrix
 import android.view.View
 import android.view.ViewTreeObserver
 
-
+/**
+ * 图片添加水印工具类
+ */
 class WatermarkUtil {
 
     companion object {
@@ -45,12 +47,12 @@ class WatermarkUtil {
                 override fun onGlobalLayout() {
                     val width = view.measuredWidth
                     val height = view.measuredHeight
-                    val bp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                    val canvas = Canvas(bp)
+                    view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                    val canvas = Canvas(bitmap)
                     view.draw(canvas)
                     canvas.save()
-                    getViewBitmapCallBack.toBitmap(bp)
-                    view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    getViewBitmapCallBack.toBitmap(bitmap)
                 }
             })
         }
