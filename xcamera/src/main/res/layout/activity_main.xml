@@ -8,7 +8,15 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/pv_camera_preview"
         android:layout_width="match_parent"
-        android:layout_height="500dp"/>
+        android:layout_height="300dp"/>
+
+    <TextView
+        android:id="@+id/tv_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="12sp"/>
 
     <Button
         android:id="@+id/btn_take_phone"
