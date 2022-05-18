@@ -10,3 +10,4 @@ rootProject.name = "TenzDemo"
 include ':app'
 include ':screenshot'
 include ':watermark'
+include ':xcamera'
