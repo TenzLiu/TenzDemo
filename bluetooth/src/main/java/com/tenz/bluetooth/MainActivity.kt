@@ -149,8 +149,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun startScanBluetooth() {
         if (!isScanningBluetooth) {
+            mBluetoothDeviceList.clear()
+            mBluetoothDeviceAdapter.notifyDataSetChanged()
             mBluetoothLeScanner.startScan(mScanCallback)
             isScanningBluetooth = true
             binding.btnScanBluetooth.text = "stop scan bluetooth"
