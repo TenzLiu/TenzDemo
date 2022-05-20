@@ -21,6 +21,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import android.graphics.Bitmap
+import android.graphics.Matrix
+
+import android.media.ExifInterface
+import java.io.IOException
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -136,7 +142,7 @@ class MainActivity : AppCompatActivity() {
                     cameraPreView.post {
                         tvMessage.text = "onImageSaved: ${file.absolutePath}"
                         val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                        ivImage.setImageBitmap(bitmap)
+                        ivImage.setImageBitmap(rotaImageView(readPictureDegree(file.absolutePath), bitmap))
                     }
                 }
 
@@ -255,6 +261,45 @@ class MainActivity : AppCompatActivity() {
             }
             image.close()
         }
+    }
+
+    /**
+     * 读取图片属性：旋转的角度
+     * @param path 图片绝对路径
+     * @return degree旋转的角度
+     */
+    fun readPictureDegree(path: String): Int {
+        var degree = 0
+        try {
+            val exifInterface = ExifInterface(path)
+            val orientation = exifInterface.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL
+            )
+            when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> degree = 90
+                ExifInterface.ORIENTATION_ROTATE_180 -> degree = 180
+                ExifInterface.ORIENTATION_ROTATE_270 -> degree = 270
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return degree
+    }
+
+
+    /*
+    * 旋转图片
+    * @param angle
+    * @param bitmap
+    * @return Bitmap
+    */
+    fun rotaImageView(angle: Int, bitmap: Bitmap): Bitmap {
+        //旋转图片 动作
+        val matrix = Matrix()
+        matrix.postRotate(angle.toFloat())
+        // 创建新的图片
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 
 }
