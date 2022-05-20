@@ -3,9 +3,11 @@ package com.tenz.xcamera
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -22,6 +24,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var ivImage: ImageView
     private lateinit var cameraPreView: PreviewView
     private lateinit var tvMessage: TextView
 
@@ -65,6 +68,7 @@ class MainActivity : AppCompatActivity() {
             initCamera()
         }
 
+        ivImage = findViewById(R.id.iv_image)
         cameraPreView = findViewById(R.id.pv_camera_preview)
         tvMessage = findViewById(R.id.tv_message)
         findViewById<Button>(R.id.btn_take_phone).setOnClickListener {
@@ -130,13 +134,15 @@ class MainActivity : AppCompatActivity() {
             imageCapture?.takePicture(outputFileOptions, cameraExecutor, object: ImageCapture.OnImageSavedCallback{
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     cameraPreView.post {
-                        tvMessage.text = outputFileResults.savedUri.toString()
+                        tvMessage.text = "onImageSaved: ${file.absolutePath}"
+                        val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                        ivImage.setImageBitmap(bitmap)
                     }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
                     cameraPreView.post {
-                        tvMessage.text = exception.toString()
+                        tvMessage.text = "onError: ${exception.toString()}"
                     }
                 }
 
@@ -152,13 +158,13 @@ class MainActivity : AppCompatActivity() {
             videoCapture?.startRecording(outputFileOptions, cameraExecutor, object: VideoCapture.OnVideoSavedCallback{
                 override fun onVideoSaved(outputFileResults: VideoCapture.OutputFileResults) {
                     cameraPreView.post {
-                        tvMessage.text = outputFileResults.savedUri.toString()
+                        tvMessage.text = "onImageSaved: ${file.absolutePath}"
                     }
                 }
 
                 override fun onError(videoCaptureError: Int, message: String, cause: Throwable?) {
                     cameraPreView.post {
-                        tvMessage.text = message
+                        tvMessage.text = "onError: ${message}"
                     }
                 }
 
