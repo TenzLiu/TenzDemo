@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
@@ -12,23 +13,42 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.tenz.bluetooth.databinding.ActivityMainBinding
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var mBluetoothDeviceAdapter: BluetoothDeviceAdapter
+    private var mBluetoothDeviceList: ArrayList<BluetoothDevice> = arrayListOf()
     private var isScanningBluetooth = false
-    lateinit var mBluetoothLeScanner: BluetoothLeScanner
-    lateinit var mBluetoothAdapter: BluetoothAdapter
+    private lateinit var mBluetoothLeScanner: BluetoothLeScanner
+    private lateinit var mBluetoothAdapter: BluetoothAdapter
     private val mScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
-            Log.d("tenz", "device?.name: ${result?.device?.name}--device?.address: ${result?.device?.address}")
+            result?.let {
+                addBluetoothDeviceList(it.device)
+            }
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun addBluetoothDeviceList(bluetoothDevice: BluetoothDevice) {
+        var exist = false
+        for (device in mBluetoothDeviceList) {
+            //为了美观，剔除名称为空的设备
+            if (bluetoothDevice.name.isNullOrBlank() || bluetoothDevice.address.equals(device.address)) {
+                exist = true
+            }
+        }
+        if (!exist) {
+            mBluetoothDeviceList.add(bluetoothDevice)
+        }
+        mBluetoothDeviceAdapter.notifyDataSetChanged()
     }
 
     //打开蓝牙意图
@@ -76,6 +96,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.rvBluetooth.layoutManager = LinearLayoutManager(this)
+        mBluetoothDeviceAdapter = BluetoothDeviceAdapter(this, mBluetoothDeviceList)
+        binding.rvBluetooth.adapter = mBluetoothDeviceAdapter
 
         if (isOpenBluetooth()) {
             mBluetoothAdapter = (getSystemService(BLUETOOTH_SERVICE) as BluetoothManager).adapter
