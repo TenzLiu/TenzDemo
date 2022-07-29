@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minHeight="130dp"
+    android:minWidth="130dp"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/my_app_widget_provider"
+    android:resizeMode="none"
+    android:previewImage="@drawable/ic_baseline_access_time_24">
+
+</appwidget-provider>
