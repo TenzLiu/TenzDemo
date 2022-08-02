@@ -7,6 +7,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.widget.RemoteViews
 import java.util.*
 
@@ -21,6 +22,7 @@ class UpdateWidgetService: Service() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.d("tenz", "onCreate---------")
         timer = Timer()
         timerTask = object: TimerTask(){
 
@@ -49,6 +51,7 @@ class UpdateWidgetService: Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d("tenz", "onDestroy---------")
         timer?.cancel()
         timerTask?.cancel()
         timer = null

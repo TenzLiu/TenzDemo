@@ -1,12 +1,10 @@
 package com.tenz.widget
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.widget.RemoteViews
 import android.widget.Toast
 
@@ -27,8 +25,6 @@ class MyAppWidgetProvider: AppWidgetProvider() {
      */
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        val updateWidgetServiceIntent = Intent(context, UpdateWidgetService::class.java)
-        context.startService(updateWidgetServiceIntent)
         if (intent.action.equals(REFRESH_ACTION)) {
             //点击刷新或通知刷新
             val appWidgetManager = AppWidgetManager.getInstance(context)
@@ -53,20 +49,6 @@ class MyAppWidgetProvider: AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        val remoteViews = RemoteViews(context.packageName, R.layout.my_app_widget_provider)
-        remoteViews.setTextViewText(R.id.tv_time, TimeUtil.formatTime(System.currentTimeMillis()))
-        //刷新点击意图
-        val intentClick = Intent()
-        intentClick.setClass(context, MyAppWidgetProvider::class.java)
-        intentClick.action = REFRESH_ACTION
-        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getBroadcast(context, 0, intentClick, PendingIntent.FLAG_MUTABLE)
-        } else {
-            PendingIntent.getBroadcast(context, 0, intentClick, PendingIntent.FLAG_ONE_SHOT)
-        }
-        remoteViews.setOnClickPendingIntent(R.id.iv_refresh, pendingIntent)
-        //更新部件
-        appWidgetManager.updateAppWidget(appWidgetIds, remoteViews)
     }
 
     /**
